@@ -1,0 +1,317 @@
+import java.util.Scanner;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Random;
+
+class Main {
+  public static Boolean debug = false;
+  public static String userName = "???";
+  
+// ANSI colors
+  public static final String ANSI_RESET = "\u001B[0m";
+  public static final String ANSI_BLACK = "\u001B[30m";
+  public static final String ANSI_RED = "\u001B[31m";
+  public static final String ANSI_GREEN = "\u001B[32m";
+  public static final String ANSI_YELLOW = "\u001B[33m";
+  public static final String ANSI_BLUE = "\u001B[34m";
+  public static final String ANSI_PURPLE = "\u001B[35m";
+  public static final String ANSI_CYAN = "\u001B[36m";
+  public static final String ANSI_WHITE = "\u001B[37m";
+  
+  public static void main(String[] args) {
+    // Initialization
+    
+    Scanner s = new Scanner(System.in);
+    System.out.println(ANSI_GREEN + "==============================================================================" + ANSI_RESET);
+    System.out.println("");
+    System.out.println(ANSI_CYAN + "   _____                   __                       .__            .___" + ANSI_RESET + "(TM)");
+    System.out.println(ANSI_CYAN + "  /     \\ _____    _______/  |_  ___________  _____ |__| ____    __| _/");
+    System.out.println(ANSI_CYAN + " /  \\ /  \\\\__  \\  /  ___/\\   __\\/ __ \\_  __ \\/     \\|  |/    \\  / __ |");
+    System.out.println(ANSI_CYAN + "/    Y    \\/ __ \\_\\___ \\  |  | \\  ___/|  | \\/  Y Y  \\  |   |  \\/ /_/ |");
+    System.out.println(ANSI_CYAN + "\\____|__  (____  /____  > |__|  \\___  >__|  |__|_|_ /__|___|  /\\____ |");
+    System.out.println(ANSI_RESET + "\n By Kevin Chen");
+    System.out.println(ANSI_GREEN + "==============================================================================" + ANSI_RESET);
+    
+    System.out.println("Enter " + ANSI_YELLOW + "1" + ANSI_RESET + " for a quick tutorial, " + ANSI_YELLOW + "2" + ANSI_RESET + " to begin, or enter " + ANSI_YELLOW + "3" + ANSI_RESET + " to run in debugging mode.");
+    int selection = s.nextInt();
+    s.nextLine();
+    Boolean playAgain = true;
+   while (playAgain == true){
+    if (selection == 1) {
+      showTutorial();
+    } else if (selection == 2) {
+      System.out.println("Alright, let's get into it! Generating code...");
+    } else if (selection == 3) {
+      System.out.println(ANSI_RED + "Debugging mode is ON" + ANSI_RESET);
+      debug = true;
+    }
+      else {
+      System.out.println("Following instructions is hard, huh?");
+    }
+    
+    System.out.println(ANSI_YELLOW + "\nEnter your username..." + ANSI_RESET);
+    
+    userName = s.nextLine();
+    
+    if (userName == null || userName == " ") {
+      userName = "mysterious stranger";
+    }
+
+
+    System.out.println("------------------------------------------");
+    String target = generateNum();
+    System.out.println("Agent " + ANSI_PURPLE + userName + ANSI_RESET + " has arrived at the scene of the crime. The " + ANSI_RED + "OMINOUS RED DEVICE" + ANSI_RESET + " sits squarely in the middle of the room. \n\nYou decide, against all reason, to guess the password.");
+    if (debug == true) {
+      System.out.println("Debugging: target is " + target);
+    } System.out.println("");
+    ArrayList<String> board = new ArrayList<String>();
+    Boolean win = false;
+    
+    // This loop iterates through each round of the game, taking input and calling the functions to create a valid output sequence.
+    for (int r = 0; r < 10; r++) {
+      System.out.println(ANSI_YELLOW + "Enter code" + ANSI_RESET + " for guess " + ANSI_CYAN + (r+1) + "/10" + ANSI_RESET + ":");
+      String input = s.nextLine().toUpperCase().substring(0,4);
+      board.add(runGame(input, target));
+      System.out.println("---------------------------");
+      
+      // prints the board (with colors???)
+      System.out.println("Agent " + userName + "'s Notebook (Current Game)");
+      for (int p = 0; p < board.size(); p++) {
+        String inputBoard = board.get(p);
+        String outputBoard = "";
+        // ensures that x'es are printed in color and o's are white by reconstructing the string
+          for (int q = 0; q < inputBoard.length(); q++) {
+          char acter = inputBoard.charAt(q);
+          if (acter == 'x') {
+            System.out.print(ANSI_RED + board.get(p).charAt(q) + ANSI_RESET);
+          } else if (acter == 'o') {
+            System.out.print(ANSI_WHITE + board.get(p).charAt(q) + ANSI_RESET);
+          } else {
+            System.out.print(board.get(p).charAt(q));
+          }
+          } System.out.println("");
+        
+        
+      }
+      System.out.println("---------------------------");
+      
+      // System.out.println(board.get(r).substring(7));
+      
+      if (r == 3) {
+        System.out.println(ANSI_RED + "The mysterious device begins to beep slowly." + ANSI_RESET);
+      } else if (r == 5) {
+        System.out.println(ANSI_RED + "You have to be close. You're sure of it! Meanwhile, the device has begun rattling worryingly." + ANSI_RESET);
+      } else if (r == 8) {
+        System.out.println(ANSI_RED + "You consider the choices that have led you to this career." + ANSI_RESET);
+      }
+      // Checking function detects whether the player has succeeded.
+      if (board.get(r).substring(7).equals("xxxx") == true) {
+        win = true;
+        System.out.println(ANSI_YELLOW + "With the entrance of the last code, the bomb instantly stops beeping.");
+        System.out.println(" __      __  _          _                            _ ");
+        System.out.println(" \\ \\    / / (_)        | |                          | |");
+        System.out.println("  \\ \\  / /   _    ___  | |_    ___    _ __   _   _  | |");
+        System.out.println("   \\ \\/ /   | |  / __| | __|  / _ \\  | '__| | | | | | |");
+        System.out.println("    \\  /    | | | (__  | |_  | (_) | | |    | |_| | |_|");
+        System.out.println("     \\/     |_|  \\___|  \\__|  \\___/  |_|     \\__, | (_)");
+        System.out.println("                                              __/ |");
+        System.out.println("                                             |___/");
+        if (r == 0) {
+          System.out.println(ANSI_RESET + "Congratulations, Agent " + userName + ", you've defused the bomb in just one turn. Outstanding performance!");
+        } else {
+          System.out.println(ANSI_RESET + "Congratulations, Agent " + userName + ". You managed to decrypt the code with " + (9 - r) + " turn(s) left." + ANSI_RED + " LEGO CITY" + ANSI_RESET + " is saved!");
+        }
+        break;
+      }
+    }   if (win == false) {
+        System.out.println(ANSI_RED + " Uh oh..." + ANSI_RESET);
+        System.out.println("   _____");
+        System.out.println("  / ____|");
+        System.out.println(" | |  __    __ _   _ __ ___     ___        ___   __   __   ___   _ __ ");
+        System.out.println(" | | |_ |  / _` | | '_ ` _ \\   / _ \\      / _ \\  \\ \\ / /  / _ \\ | '__|");
+        System.out.println(" | |__| | | (_| | | | | | | | |  __/     | (_) |  \\ V /  |  __/ | |   ");
+        System.out.println("  \\_____|  \\__,_| |_| |_| |_|  \\___|      \\___/    \\_/    \\___| |_|");
+        System.out.println("");
+        
+        
+        System.out.println(ANSI_PURPLE + userName + ANSI_RESET + " managed to escape before the bomb exploded, and was unable to prevent" + ANSI_GREEN + " 113 million dollars" + ANSI_RESET +  " in property damage. \nIf only they had figured out that the code was just " +  target + ".");
+    }
+     System.out.println(ANSI_PURPLE + "Play again? Y/N" + ANSI_RESET);
+    char choice = s.nextLine().charAt(0);
+    if (Character.toUpperCase(choice) == 'Y') {
+      System.out.println(ANSI_PURPLE + "Ok, restarting game!" + ANSI_RESET);
+    } else {
+      playAgain = false;
+      System.out.println(ANSI_PURPLE + "Ok, now exiting game..." + ANSI_RESET);
+    }
+  }
+ 
+  
+  }
+  
+  public static String generateNum() { // Generates a target string in initialization phase
+    Random rng = new Random();
+    String toReturn = "";
+    for (int i = 0; i < 4; i++) {
+      int random = rng.nextInt(8) + 1;
+      
+        switch (random) {
+          case 1:
+              toReturn += "R";
+          break;
+          case 2: 
+              toReturn += "O";
+          break;
+          case 3:
+              toReturn += "Y";
+          break;
+          case 4:
+              toReturn += "G";
+          break;
+          case 5:
+              toReturn += "B";
+          break;
+          case 6: 
+              toReturn += "I";
+          break;
+          case 7:
+              toReturn += "V";
+          break;
+          case 8:
+              toReturn += "W";
+          break;
+        }
+    }
+    if (debug == true) {
+      return("YPOB");
+    } else {
+      return toReturn;
+    }
+   
+  }
+  
+    public static String runGame(String input, String target) {
+      String toReturn = input + " | ";
+      String toAdd = "";
+
+      for (int i = 0; i < 4; i++) {
+        /*
+        System.out.println(target.charAt(i));
+        System.out.println(input.charAt(i));
+        */
+        String targetChar = Character.toString(input.charAt(i));
+        String buffer;
+        
+        if (input.charAt(i) == target.charAt(i)) {
+          buffer = target.substring(0,i) + "-" + target.substring(i+1);
+          target = buffer;
+          toAdd += "x";
+        } else if (target.indexOf(input.charAt(i)) != -1) {
+          if (debug == true) {
+            System.out.println("Now processing character: " + input.charAt(i));
+          }
+          if (addO(input.charAt(i),target,input) == true) {
+            toAdd += "o";
+            buffer = target.substring(0,target.indexOf(targetChar)) + "-" + target.substring(target.indexOf(targetChar) + 1);
+            target = buffer;
+          }
+       }
+       if (debug == true) {
+           System.out.println(target);
+        }
+       
+      }
+      
+      // sorts string in order to conceal order from output
+      char tempArray[] = toAdd.toCharArray(); 
+      Arrays.sort(tempArray); 
+      toReturn = toReturn + String.valueOf(tempArray);
+      return toReturn;
+    }
+    
+    public static Boolean addO(char inputChar, String target, String input) {
+       // Algorithm reiterates through every char in the target string to detect whether another match already exists. If it does, 
+       // no 'o' is printed.
+        
+        
+       // Tracks the number of current character occurences in order to prevent double scoring.
+       int inputCharOccurence = 0;
+       int targetCharOccurence = 0;
+       
+       for (int b = 0; b < 4; b++) {
+         if (inputChar == target.charAt(b)) {
+           targetCharOccurence += 1;
+         }
+       }
+       
+       for (int f = 0; f < 4; f++) {
+         if (inputChar == input.charAt(f)) {
+           inputCharOccurence += 1;
+         }
+       }
+       
+      String buffer;
+      for (int v = 0; v < 4; v++) {
+        if (input.charAt(v) == target.charAt(v)) {
+          buffer = target.substring(0,v) + "-" + target.substring(v + 1);
+          target = buffer;
+      }
+      }
+      
+      for (int a = 0; a < 4; a++) {
+        if ((target.indexOf(inputChar) != -1) && (inputCharOccurence >= targetCharOccurence)) {
+          if (debug == true) {
+            System.out.println("Partial match. Print an O");
+          }
+           return true;
+         }
+      }
+       
+       
+      return false;
+       
+    } 
+     /*
+      for (int p = 0; p < 4; p++) {
+
+        
+        String newStr = input.substring(0,p) + "-" + input.substring(p+1);
+        if (debug == true) {
+        System.out.println(newStr);
+        }
+        
+          if (input.charAt(p) == target.charAt(p)) {
+            if (debug == true) {
+              System.out.println(input.charAt(p) + " gets an X");
+            }
+           target = newStr;
+          } else if ((target.indexOf(input.charAt(p)) != -1) && (inputCharOccurence == targetCharOccurence)) {
+            
+            inputCharOccurence -= 1;
+            if (debug == true) {
+              System.out.println("Print 'o' for " + input.charAt(p) + " as target is " + target);
+            }
+          
+           target = newStr;
+           return true;    
+            } else {
+            if (debug == true) {
+               System.out.println(input.charAt(p) + " is not in " + target);
+            }
+           return false;
+            }
+             
+          }
+          return false;
+        */
+    
+    public static void showTutorial() {
+      // Prints the tutorial
+      System.out.println("_________________________________________________________________________________________________________________________");
+      System.out.println("Mastermind or Master Mind is a code-breaking game for two players: You, and our state-of-the-art random number generator.");
+      System.out.println("\nAn evil criminal organization composed entirely of cats has planted a bomb in the " + ANSI_RED + "LEGO CITY" + ANSI_RESET + " Center for Puppies, Orphans, and Niceness in their bid to topple human civilization. Your objective, as the premier bomb defusal agent in the city, is to discover the four-color defusal code by making educated guesses. Every time you enter an input string consisting of four characters, the bomb will return a string of " + ANSI_RED + "x" + ANSI_RESET + "'s and o's. \n \nEach" + ANSI_RED + " 'x' " + ANSI_RESET + "signifies the presence of the right colour in the right location in your string (a perfect match), while each 'o' signifies the presence of a correct character in the wrong location. Due to the creator's excellent programming abilities, multiple occurences of the same color is possible.");
+      System.out.println("\nPossible characters are R, O, Y, G, B, I, V, and W. But beware! You only have ten guesses available before" + ANSI_RED + "LEGO CITY" + ANSI_RESET + " is destroyed!");
+      System.out.println("_________________________________________________________________________________________________________________________");
+    }
+  
+}
