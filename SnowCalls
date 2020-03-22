@@ -1,0 +1,73 @@
+import java.util.Scanner;
+import java.util.Arrays;
+
+
+class Main {
+  public static void main(String[] args) {
+    
+    Scanner reader = new Scanner(System.in);
+    int nIterations = reader.nextInt();
+    
+    /* Planning:
+    First, convert all input into a string w/o dashes and prune to 10 characters only
+    Convert that string into numbers exclusively
+    Then, add dashes in the right place and output.
+    */
+    
+    for (int i = 0; i < nIterations; i++){
+      System.out.println(convertFunction(reader.next()));
+    }
+    
+  }
+  
+  public static String convertFunction(String input) {
+    String processedIn = noDashes(input);
+    // System.out.println(processedIn);
+    String trueOutput = "";
+    String trueTrueOutput = "";
+    
+    String groupTwo = "abc";
+    String groupThree = "def";
+    String groupFour = "ghi";
+    String groupFive = "jkl";
+    String groupSix = "mno";
+    String groupSeven = "pqrs";
+    String groupEight = "tuv";
+    String groupNine = "wxyz";
+    
+    for (int i = 0; i < 10; i++) {
+      String target = String.valueOf(processedIn.charAt(i));
+      
+      if (Character.isLetter(processedIn.charAt(i)) == true) {
+        if (groupTwo.contains(target) == true) {
+          trueOutput += "2";
+        } else if (groupThree.contains(target)== true) {
+          trueOutput += "3";
+        } else if (groupFour.contains(target)== true) {
+          trueOutput += "4";
+        } else if (groupFive.contains(target)== true) {
+          trueOutput += "5";
+        } else if (groupSix.contains(target)== true) {
+          trueOutput += "6";
+        } else if (groupSeven.contains(target)== true) {
+          trueOutput += "7";
+        } else if (groupEight.contains(target)== true) {
+          trueOutput += "8";
+        } else if (groupNine.contains(target)== true) {
+          trueOutput += "9";
+        } 
+      } else {
+        trueOutput += processedIn.charAt(i);
+      }
+  }
+  
+    trueTrueOutput += (trueOutput.substring(0,3) + "-" + trueOutput.substring(3,6) + "-" + trueOutput.substring(6, 10));
+    return trueTrueOutput;
+  }
+  
+  public static String noDashes(String input) {
+    String noDash = input.replaceAll("\\-","");
+    String trimmed = noDash.substring(0, 10).toLowerCase();
+    return trimmed;
+  }
+}
